@@ -44,8 +44,8 @@ the first hardware type is /dev/sda and for the second hardware type is
 /dev/sdb. Then to set the grains on the minions, run the following two
 salt commands:
 
-salt 'farm[0-5]' grains.setval timeshift-disk /dev/sda salt 'farm[6-10]'
-grains.setval timeshift-disk /dev/sdb
+salt 'farm[0-5]' grains.setval timeshift-disk /dev/sda
+salt 'farm[6-10]' grains.setval timeshift-disk /dev/sdb
 
 Note that using grains.setval does not permanently set the grain on each
 minion. When the minion reboots, that information is lost. Since you
