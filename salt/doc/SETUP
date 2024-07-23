@@ -1,1 +1,26 @@
-This document explains the steps necessary to setup the Mintupdate-ni OS version update on the Master and the Minions of a Linux Mint Farm.
+This document explains the steps necessary to setup the Mintupdate-ni OS version update on the Master and the Minions of a Linux Mint Farm. The first step is to decide which disk to use on the minions for a timeshift backup. If the farm is comprised of the same hardware (i.e, all minions run on the same hardware), then the setup procedure can pick a disk to use for each minion machine. For example, suppose all minions run on a laptop that has only one disk installed. Then it is only necessary to find out the disk on which '/' is mounted. This is possible by logging on to one of the laptops and running:
+
+df -h | grep '/$' | sed 's/ .*//'
+
+The result will be the disk identifier of the root partition.
+
+Once the disk is identified, it is necessary to set a grain on each minion to that disk identifier. The grain has the identifier 'timeshift-disk'. To set the grain temporarily on each minion, at a command prompt use:
+
+salt '*' grains.setval timeshift-disk <disk_identifier>
+
+For example, if the disk identier is /dev/sda, execute the command"
+
+salt '*' grains.setval timeshift-disk /dev/sda
+
+If the farm you manage has minions running on different hardware, you must determine the timeshift disk for each hardware type. Then run the salt command, selecting those minions that run on each type and setting the grain to the appropriate disk identifier. For example, suppose the farm has minions running on two types of hardware. Select a minion that runs on each type and determine the timeshift disk. That is, if the minions have only one disk, run:
+
+df -h | grep '/$' | sed 's/ .*//'
+
+on a minion of each hardware type. Then run the grains setval command, selecting the minions that run on the first type and then run it again selecting the minions that run on the second type.
+
+For example, suppose the farm has two hardware types. The minions running on the first type are 'farm[0-5]' and the minions running on the second type are 'farm[6-10]'. Suppose the timeshift disk for minions of the first hardware type is /dev/sda and for the second hardware type is /dev/sdb. Then to set the grains on the minions, run the following two salt commands:
+
+salt 'farm[0-5]' grains.setval timeshift-disk /dev/sda
+salt 'farm[6-10]' grains.setval timeshift-disk /dev/sdb
+
+Note that using grains.setval does not permanently set the grain on each minion. When the minion reboots, that information is lost. Since you will only use this grain information when you update the OS, this shouldn't be a problem.
