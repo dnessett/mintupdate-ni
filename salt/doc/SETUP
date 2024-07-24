@@ -12,16 +12,21 @@ df -h | grep '/$' | sed 's/ .*//'
 
 The result will be the disk identifier of the root partition.
 
+You can execute this command (without logging into the minion) from the master using the cmd.run salt command:
+
+sudo salt <minion-id> cmd.run "df -h | grep '/$' | sed 's/ .*//'"
+
+where <minion-id> is the identifier of the minion you are testing.
+
 Once the disk is identified, it is necessary to set a grain on each
 minion to that disk identifier. The grain has the identifier
-'timeshift-disk'. To set the grain temporarily on each minion, at a
-command prompt use:
+'timeshift-disk'. To set the grain on each minion, at a command prompt use:
 
-salt '*' grains.setval timeshift-disk <disk_identifier>
+sudo salt '*' grains.setval timeshift-disk <disk_identifier>
 
 For example, if the disk identier is /dev/sda, execute the command"
 
-salt '*' grains.setval timeshift-disk /dev/sda
+sudo salt '*' grains.setval timeshift-disk /dev/sda
 
 If the farm you manage has minions running on different hardware, you
 must determine the timeshift disk for each hardware type. Then run the
@@ -31,7 +36,11 @@ farm has minions running on two types of hardware. Select a minion that
 runs on each type and determine the timeshift disk. That is, if the
 minions have only one disk, run:
 
-df -h | grep '/$' | sed 's/ .*//'
+df -h | grep '/$' | sed 's/ .*//' (directly)
+
+or
+
+sudo salt <minion-id> cmd.run "df -h | grep '/$' | sed 's/ .*//'" (from the master)
 
 on a minion of each hardware type. Then run the grains setval command,
 selecting the minions that run on the first type and then run it again
@@ -44,10 +53,6 @@ the first hardware type is /dev/sda and for the second hardware type is
 /dev/sdb. Then to set the grains on the minions, run the following two
 salt commands:
 
-salt 'farm[0-5]' grains.setval timeshift-disk /dev/sda
-salt 'farm[6-10]' grains.setval timeshift-disk /dev/sdb
+sudo salt 'farm[0-5]' grains.setval timeshift-disk /dev/sda
+sudo salt 'farm[6-10]' grains.setval timeshift-disk /dev/sdb
 
-Note that using grains.setval does not permanently set the grain on each
-minion. When the minion reboots, that information is lost. Since you
-will only use this grain information when you update the OS, this
-shouldn't be a problem.
