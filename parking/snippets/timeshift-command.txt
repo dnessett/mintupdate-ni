@@ -1,1 +1,1 @@
-sudo timeshift --create --comments "backup before version update" --tags 0 	--rsync --quiet --scripted --snapshot-device {{ grains['timeshift-disk'] }} 
+sudo salt '*' cmd.run "timeshift --create --comments 'backup before version update' --tags 0 --rsync --quiet --scripted --snapshot-device {{ grains['timeshift-disk'] }}"
