@@ -1,0 +1,2 @@
+test-timeshift:
+  cmd.run: "timeshift --create --comments 'backup before version update' --tags 0 --rsync --quiet --scripted --snapshot-device {{ grains['timeshift-disk'] }}" 
