@@ -9,7 +9,7 @@ test-reboot:
   hosts-wait-for-reboot:
     salt.wait_for_event:
       - name: salt/minion/*/start
-      - id_list: {{ hosts.keys()|list|yaml }}
+      - id_list: {{ grains.id }}
       - timeout: 600
       - require:
         - salt: hosts-restart
